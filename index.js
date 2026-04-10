@@ -46,7 +46,7 @@ function inputOperator(op) {
     previousInput = currentInput;
     operator = op;
     shouldResetScreen = true;
-}
+};
 
 //Display update function 
 function displayUpdate() {
@@ -64,7 +64,7 @@ function calculate() {
 
     if (operator === "+") result = prevInp + currInp;
     if (operator === "-") result = prevInp - currInp;
-    if (operator === "*") result = prevInp * currInp;
+    if (operator === "X") result = prevInp * currInp;
     if (operator === "/") {
         result = currInp === 0 ? "ERROR" : prevInp / currInp;
     };
@@ -82,7 +82,7 @@ function calculate() {
 
 //Display clear function
 function clear() {
-    currentInput = 0;
+    currentInput = '0';
     previousInput = null;
     operator = null;
 };
@@ -90,10 +90,14 @@ function clear() {
 // Add dot function
 function addDot() {
     if (shouldResetScreen) {
-        currentInput = "0.";
+        if (currentInput === "ERROR") {
+            currentInput = "0."
+        } else if (!currentInput.toString().includes(".")) {
+            currentInput += ".";
+        } 
         shouldResetScreen = false;
-        return;
-    }
+        return
+    };
 
     if (!currentInput.toString().includes(".")) {
         currentInput += ".";
@@ -102,12 +106,9 @@ function addDot() {
 
 //Positive - Negative
 function positiveNegative() {
-    if (operator === "") {
-        previousInput = (Number(previousInput) * -1).toString();
-        display.textContent = previousInput;
-    } else {
-        currentInput = (Number(currentInput) * -1).toString();
-        display.textContent = currentInput;
-    }
+    currentInput = (Number(currentInput) * -1).toString();
+    displayUpdate(); 
 };
+
+
 
