@@ -1,0 +1,61 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-weight: 900;
+}
+
+.calculator {
+    width: 300px;
+    background-color: rgb(44, 44, 44);
+    border-radius: 12px;
+}
+
+.display {
+    display: flex;
+    justify-content: end;
+    margin-top: 170px;
+    margin-right: 20px;
+    color: white;
+    font-size: 35px;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    margin: 20px;
+}
+
+button {
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+    background-color: rgb(94, 93, 93);
+    font-size: 20px;
+    font-weight: 900;   
+    cursor: pointer;      
+    border: none;
+}
+
+.oper-btn {
+    background-color: orange;
+}
+
+.delete {
+    grid-column: span 2;
+    background-color: rgb(184, 184, 184);
+    color: black;
+}
+
+.equal {
+    grid-column: span 2;
+    background-color: rgb(184, 184, 184);
+    color: black;
+}
+
+button:active {
+    filter: brightness(1.2);
+}
+
