@@ -1,101 +1,113 @@
-let firstNum = "";
-let secondNum = "";
-let operator = "";
-let step = 1;
-let isCalculated = false;
-const display = document.querySelector('.current-input')
-const sectionBtn = document.querySelectorAll('.btn-section')
+const display = document.querySelector('.display')
 
-// Button logic
-sectionBtn.forEach(button => {
-    button.addEventListener('click', (event) => {
-        const button = event.target.closest('button');
-        if(!button) return;
-        
-        const value = button.textContent;
+let currentInput = '0';
+let previousInput = null;
+let operator = null;
+let shouldResetScreen = false;
 
-        if (value === "C") {
-            clear()
-            return
-        } else if (value === "-/+") {
-            positiveNegative()
-            return
-        } else if (value === "%") {
-            percentage()
-            return
-        }
+//Button logic 
+const buttons = document.querySelectorAll('button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+        const value = btn.textContent;
 
         if (!isNaN(value)) {
-            if (isCalculated === true) {
-                clear()
-                isCalculated = false
-            }
-            if (step === 1) {
-                firstNum += value;
-                display.textContent = firstNum;
-            } else {
-                secondNum += value;
-                display.textContent = secondNum;
-            }
-        } else if (value != "=") {
-            operator = value;
-            step = 2;
-            isCalculated = false
+            inputNumber(value);
+        } else if (value === "C") {
+            clear()
+        } else if (value === "=") {
+            calculate()
+        } else if (value === ".") {
+            addDot()
+        } else if (value === "+/-"){
+            positiveNegative()
         } else {
-            calculate();
+            inputOperator(value)
         }
+
+        displayUpdate()
     });
 });
-// Main calculate logic function
-function calculate(value) {
-    let result = 0;
-    let num1 = Number(firstNum);
-    let num2 = Number(secondNum);
 
-    if (!operator) return;
-    if (operator === "+") result = num1 + num2;
-    if (operator === "-") result = num1 - num2;
-    if (operator === "*") result = num1 * num2;
-    if (operator === "/") {
-        result = num2 === 0 ? "ERROR" : num1 / num2;
+//Input number 
+function inputNumber(number) {
+    if (currentInput === '0' || shouldResetScreen) {
+        currentInput = number;
+        shouldResetScreen = false;
+    } else {
+        currentInput += number;
     }
+};
+
+//Input operator 
+function inputOperator(op) {
+    if(operator !== null) {
+        calculate();
+    } 
+    previousInput = currentInput;
+    operator = op;
+    shouldResetScreen = true;
+}
+
+//Display update function 
+function displayUpdate() {
+    display.textContent = currentInput;
+};
+
+//Main calculate logic
+function calculate() {
+    if (operator === null || shouldResetScreen) return;
+
+    const prevInp = Number(previousInput);
+    const currInp = Number(currentInput);
+
+    let result;
+
+    if (operator === "+") result = prevInp + currInp;
+    if (operator === "-") result = prevInp - currInp;
+    if (operator === "*") result = prevInp * currInp;
+    if (operator === "/") {
+        result = currInp === 0 ? "ERROR" : prevInp / currInp;
+    };
 
     if (result === "ERROR") {
-        display.textContent = result;
+        currentInput = result;
     } else {
-        display.textContent = Number(parseFloat(result).toFixed(3));
+        currentInput = Number.parseFloat(result.toFixed(3))
     }
 
-    firstNum = result.toString();
-    secondNum = "";
-    step = 1;
-    isCalculated = true
-}
-//Function to delete all from screen
+    shouldResetScreen = true;
+    operator = null;
+    previousInput = null;
+};
+
+//Display clear function
 function clear() {
-    step = 1;
-    firstNum = "";
-    secondNum = "";
-    operator = "";
-    display.textContent = "";
-}
-// Positive or Negative function
+    currentInput = 0;
+    previousInput = null;
+    operator = null;
+};
+
+// Add dot function
+function addDot() {
+    if (shouldResetScreen) {
+        currentInput = "0.";
+        shouldResetScreen = false;
+        return;
+    }
+
+    if (!currentInput.toString().includes(".")) {
+        currentInput += ".";
+    }
+};
+
+//Positive - Negative
 function positiveNegative() {
     if (operator === "") {
-        firstNum = (Number(firstNum) * -1).toString();
-        display.textContent = firstNum;
+        previousInput = (Number(previousInput) * -1).toString();
+        display.textContent = previousInput;
     } else {
-        secondNum = (Number(secondNum) * -1).toString();
-        display.textContent = secondNum;
+        currentInput = (Number(currentInput) * -1).toString();
+        display.textContent = currentInput;
     }
 };
-// Percentage function
-function percentage() {
-    if (operator === "") {
-        firstNum = (Number(firstNum) / 100).toString();
-        display.textContent = firstNum;
-    } else {
-        secondNum = (Number(secondNum) / 100).toString();
-        display.textContent = secondNum;
-    }
-};
+
